@@ -9,9 +9,18 @@ fileDir = ntpath.dirname(fileLocation)
 netmaskDict = netmaskdictionary.netmaskDict
 
 # Read the document into a List
-asaConfigFile = open(fileLocation, 'r')
-row = [line.split(' ') for line in asaConfigFile.readlines()]
-asaConfigFile.close()
+try:
+    asaConfigFile = open(fileLocation, 'r')
+except:
+    print('Error opening file at directory '+fileLocation+'. Please check the ntpath and run again.')
+    exit()
+
+try:
+    row = [line.split(' ') for line in asaConfigFile.readlines()]
+    asaConfigFile.close()
+except:
+    print('Error performing readlines operation on file.')
+    exit()
 
 # Pull out the first line to get the tag and address-group name, then remove it from the list
 group = row[0]
@@ -46,11 +55,15 @@ for items in objects:
         setAddress.append('set address IP-'+addr+' tag '+name+' ip-netmask '+addr+netmask+'\n')
 
 # Save set commands to output file
-with open(fileDir+'\\'+name+'-palo.txt', 'w+') as file_handler:
-    file_handler.write('set tag '+name+'\n')
-    if not description:
-        file_handler.write('set address-group '+name+' dynamic filter '+name+'\n')
-    else:
-        file_handler.write('set address-group '+name+' description "'+description+'" dynamic filter '+name+'\n')
-    for item in setAddress:
-        file_handler.write('{}'.format(item))
+try:
+    with open(fileDir+'\\'+name+'-palo.txt', 'w+') as file_handler:
+        file_handler.write('set tag '+name+'\n')
+        if not description:
+            file_handler.write('set address-group '+name+' dynamic filter '+name+'\n')
+        else:
+            file_handler.write('set address-group '+name+' description "'+description+'" dynamic filter '+name+'\n')
+        for item in setAddress:
+            file_handler.write('{}'.format(item))
+except:
+    print('Error writing output to file. Check file directory '+fileDir+' for read/write permissions.')
+    exit()
