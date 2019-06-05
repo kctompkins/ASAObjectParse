@@ -1,47 +1,30 @@
 import ntpath
+import netmaskdictionary
 
 # Input the file in full directory format, IE: C:\temp\file.txt
 fileLocation = input("Location of ASA Object Configuration: ")
-
 fileDir = ntpath.dirname(fileLocation)
 
+# Import Dictionary of netmasks in CIDR
+netmaskDict = netmaskdictionary.netmaskDict
+
+# Read the document into a List
 asaConfigFile = open(fileLocation, "r")
 row = [line.split(' ') for line in asaConfigFile.readlines()]
 asaConfigFile.close()
 
-netmaskDict = {
-    "0.0.0.0": "/0",
-    "255.0.0.0": "/8",
-    "255.128.0.0": "/9",
-    "255.192.0.0": "/10",
-    "255.224.0.0": "/11",
-    "255.240.0.0": "/12",
-    "255.248.0.0": "/13",
-    "255.252.0.0": "/14",
-    "255.254.0.0": "/15",
-    "255.255.0.0": "/16",
-    "255.255.128.0": "/17",
-    "255.255.192.0": "/18",
-    "255.255.224.0": "/19",
-    "255.255.240.0": "/20",
-    "255.255.248.0": "/21",
-    "255.255.252.0": "/22",
-    "255.255.254.0": "/23",
-    "255.255.255.0": "/24",
-    "255.255.255.128": "/25",
-    "255.255.255.192": "/26",
-    "255.255.255.224": "/27",
-    "255.255.255.240": "/28",
-    "255.255.255.248": "/29",
-    "255.255.255.252": "/30",
-    "255.255.255.254": "/31",
-    "255.255.255.255": "/32"
-}
-
-#Pull out the first line to get the tag and address-group name, then remove it from the list
+# Pull out the first line to get the tag and address-group name, then remove it from the list
 group = row[0]
 del row[0]
+print(group)
 name = group[2].strip('\n')
+
+# Check for description and add if it exists
+if "description" in row[0][1]:
+    description = row[0][1]
+    del row[0]
+else:
+    description = ""
 
 objects = []
 for items in row:
